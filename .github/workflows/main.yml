@@ -1,0 +1,25 @@
+name: Assemble firmware
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+
+    steps:
+    - uses: actions/checkout@v6
+
+    - name: Install asxxxx
+      run: |
+        wget --no-verbose https://github.com/6502org/6502.org/raw/74f5d0c0f9b73d5e353bde7b3b25ea7f43b527a1/public/tools/asm/asxs5p50.zip
+        unzip -q asxs5p50.zip
+        make -C asxv5pxx/asxmak/linux/build all
+        echo "$PWD/asxv5pxx/asxmak/linux/build" >> $GITHUB_PATH
+
+    - name: Install srecord
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y srecord
+
+    - name: Assemble firmware
+      run: make -C firmware
